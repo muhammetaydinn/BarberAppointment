@@ -1,13 +1,16 @@
 import React from "react";
 import {View, Text, StyleSheet, Dimensions, TouchableWithoutFeedback, TouchableOpacity} from 'react-native';
 
-const BarberCard = props => {
+const BarberCard = ({ item, onSelect }) => {
+  
+ 
+  
     return (
-      <TouchableOpacity onPress={()=>console.log("+")}>
+      <TouchableWithoutFeedback onPress={onSelect}>
         <View style={styles.container}>
-          <Text style={styles.text}>{props.name}</Text>
+          <Text style={styles.text}>{item.name}</Text>
         </View>
-      </TouchableOpacity>
+      </TouchableWithoutFeedback>
     );  
 };
 

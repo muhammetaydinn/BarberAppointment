@@ -1,14 +1,29 @@
 import React from 'react';
-import {View, Text, Button, Image, Dimensions} from 'react-native';
+import {View, Text, Button, Image, Dimensions, FlatList, ActivityIndicator} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import InfoCard from '../components/InfoCard.js/InfoCard';
+import useFetch from '../hooks/useFetch/useFetch';
+import Config from 'react-native-config';
+import RandevularCard from '../components/Randevular/Randevular';
+
 
 
 
 export default function Second(props) {
+  const { loading, error, data } = useFetch(Config.API + '/randevularim');
+  //buradan kuafor id gidiyor orda barbersten cekecek
+  const renderRandevularCard = ({ item }) => {
+    return (
+      <RandevularCard
+        item={item}></RandevularCard>
+    );
+  };
+  
+  
+   
   const w = Dimensions.get('window').width;
   const h = Dimensions.get('window').height;
-    console.log(props);
+    //console.log(props);
   
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -77,11 +92,29 @@ export default function Second(props) {
           marginHorizontal: w * 0.05,
         }}
       />
-      <View style={{marginTop:15}}>
-        <Text style={{textAlign:'center',fontSize:20,color:'black',fontWeight:'bold'}}>
+      <View style={{marginTop: 15}}>
+        <Text
+          style={{
+            textAlign: 'center',
+            fontSize: 20,
+            color: 'black',
+            fontWeight: 'bold',
+          }}>
           Randevularım
         </Text>
       </View>
+      {loading ? (
+        <ActivityIndicator size="large" />
+      ) : (
+          <FlatList style={{}} 
+          data={data}
+          renderItem={renderRandevularCard}
+          keyExtractor={item => item._id}
+        />
+      )}
     </SafeAreaView>
   );
 }
+/*
+<Text>{data[0].date}</Text>
+*/

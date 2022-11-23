@@ -1,30 +1,27 @@
 import React, {useState, useEffect} from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  SafeAreaView,
-  ActivityIndicator,
-  FlatList,
-  Button,
-  Dimensions,
-  Touchable,
-  TouchableOpacity,
-  Image,
-} from 'react-native';
+import {StyleSheet,Text,View,SafeAreaView,ActivityIndicator,FlatList,Button,Dimensions,Touchable,TouchableOpacity,Image,} from 'react-native';
 import BarberCard from '../components/BarberCard/BarberCard';
 import SearchBar from '../components/SearchBar/SearchBar';
 import SwitchSelector from 'react-native-switch-selector';
+import Config from 'react-native-config';
 
-// get data from this URL!
+
 const axios = require('axios');
 
-const renderBarberCard = ({item}) => {
-  return <BarberCard name={item.name}></BarberCard>;
-};
 
-const App = ({navigation}) => {
-  const [gender, setGender] = React.useState('f');
+const App = ({ navigation }) => {
+  const handleBarberSelect = _id => {
+    
+    navigation.navigate("Third",{_id});
+  };
+  const renderBarberCard = ({item}) => {
+    //console.log(item);
+    //console.log("------------------------------");
+
+    return <BarberCard onSelect={()=>handleBarberSelect(item._id)} item={item}></BarberCard>;
+  };
+
+  const [gender, setGender] = useState(false);
 
   const [list, setList] = useState([]);
   //: .2 list çözdü
@@ -32,27 +29,42 @@ const App = ({navigation}) => {
   const [loading, setLoading] = useState(true);
 
   const handleSearch = text => {
-    const filteredList = list2.filter(barber => {
+    const filteredList = list2.filter(
+      barber => {
       const searchedText = text.toLowerCase();
       const currentTitle = barber.name.toLowerCase();
       return currentTitle.indexOf(searchedText) > -1;
-    });
+      }
+    );
     setList(filteredList);
   };
 
+
+  const handleGender = (value) => {
+    const filteredlist = list2
+      .filter(item => {
+        return item.gender == value;
+      });
+    //console.log(filteredlist);
+    
+     setList(filteredlist);
+   
+  };
+
   function getBarbers() {
+    //console.log(Config.API_URL);
     axios
-      .get('http://192.168.1.123:3000/barbers')
+      .get(Config.API_URL)
       .then(function (response) {
         setList(response.data);
         setList2(response.data);
         setLoading(false);
         // handle success
-        console.log(response.data);
+        //console.log(response.data);
       })
       .catch(function (error) {
         // handle error
-        console.log(error);
+        //console.log(error);
       })
       .then(function () {
         // always executed
@@ -87,17 +99,20 @@ const App = ({navigation}) => {
       <SwitchSelector
         initial={1}
         onPress={value => {
+          //console.log(value);
           setGender(value);
-          console.log('selected gender' + value);
+          handleGender(value);
+
         }}
+      
         textColor={'gray'} //'#7a44cf'
         selectedColor={'white'}
         buttonColor={'gray'}
         borderColor={'gray'}
         hasPadding
         options={[
-          {label: 'Erkek', value: 'm'}, //images.feminino = require('./path_to/assets/img/feminino.png')
-          {label: 'Kadın', value: 'f'}, //images.masculino = require('./path_to/assets/img/masculino.png')
+          {label: 'Erkek', value: true}, //images.feminino = require('./path_to/assets/img/feminino.png')
+          {label: 'Kadın', value: false}, //images.masculino = require('./path_to/assets/img/masculino.png')
         ]}
         testID="gender-switch-selector"
         accessibilityLabel="gender-switch-selector"
@@ -120,7 +135,7 @@ const App = ({navigation}) => {
             return item;
           })}
           renderItem={renderBarberCard}
-          keyExtractor={item => item._id}
+          keyExtractor={item => item.id}
         />
       )}
     </SafeAreaView>

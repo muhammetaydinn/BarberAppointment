@@ -6,9 +6,6 @@ import useFetch from '../hooks/useFetch/useFetch';
 import Config from 'react-native-config';
 import RandevularCard from '../components/Randevular/Randevular';
 
-
-
-
 export default function Second(props) {
   const { loading, error, data } = useFetch(Config.API + '/randevularim');
   //buradan kuafor id gidiyor orda barbersten cekecek
@@ -18,6 +15,7 @@ export default function Second(props) {
         item={item}></RandevularCard>
     );
   };
+  
   
   
    

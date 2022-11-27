@@ -28,7 +28,7 @@ const CustomerStack = () => {
       <Stack.Screen
         name="Third"
         component={Third}
-        options={{headerShown: false}}
+        options={{headerTitle: '', headerTransparent: true}}
       />
     </Stack.Navigator>
   );

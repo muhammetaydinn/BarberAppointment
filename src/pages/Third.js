@@ -17,7 +17,13 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import InfoCard from '../components/InfoCard.js/InfoCard';
 import useFetch from '../hooks/useFetch/useFetch';
 import axios from 'axios';
-export default function Third({route}) {
+export default function Third({ route ,navigation}) {
+  
+  
+  function goBack() {
+    navigation.goBack();
+  }
+
   const w = Dimensions.get('window').width;
   const h = Dimensions.get('window').height;
   useEffect(() => {
@@ -59,7 +65,9 @@ export default function Third({route}) {
         })
           .then(function (response) {
             console.log('baglaniyo: ' + Config.API_URL + kuaforid);
-            alert('Randevu Alındı');
+            goBack();
+
+            
           })
           .catch(function (error) {
             console.log('-----randevu Rezerve ' + error);
@@ -76,6 +84,7 @@ export default function Third({route}) {
         })
           .then(function (response) {
             console.log('baglaniyo: ' + Config.API_URL + kuaforid);
+            goBack();
           })
           .catch(function (error) {
             console.log('-----randevu Rezerve ' + error);
@@ -93,6 +102,7 @@ export default function Third({route}) {
         })
           .then(function (response) {
             console.log('baglaniyo: ' + Config.API_URL + kuaforid);
+            goBack();
           })
           .catch(function (error) {
             console.log('-----randevu Rezerve ' + error);
@@ -109,9 +119,21 @@ export default function Third({route}) {
   const day = date.getDate();
   const month = date.getMonth() + 1;
   const year = date.getFullYear();
-  const today = day + '.' + month + '.' + year;
-  const tomorrow = day + 1 + '.' + month + '.' + year;
-  const nextDay = day + 2 + '.' + month + '.' + year;
+  const today = year + '-' + month + '-' + day;
+  const tomorrow = year  + '-' + month + '-' + (day+1);
+  const nextDay = year  + '-' + month + '-' + (day+2);
+  const date1 = new Date(today);
+  const date2 = new Date(tomorrow);
+  const Difference_In_Time = date2.getTime() - date1.getTime();
+  const Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
+
+  // const startDate = '2020-01-01';
+  // const endDate = '2020-03-15';
+  // const diffInMs = new Date(endDate) - new Date(startDate);
+  // const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+
+  // console.log("diffindays "+diffInDays);
+
 
   const {_id} = route.params;
 

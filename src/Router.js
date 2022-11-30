@@ -8,6 +8,14 @@ import Third from './pages/Third';
 import Fourth from './pages/Fourth';
 import Fifth from './pages/Fifth';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+ import {
+   useQuery,
+   useMutation,
+   useQueryClient,
+   QueryClient,
+   QueryClientProvider,
+ } from 'react-query';
+ const queryClient = new QueryClient();
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -37,36 +45,38 @@ const CustomerStack = () => {
 
 function Router() {
   return (
-    <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={{
-          tabBarLabelPosition: 'beside-icon',
-          tabBarLabelStyle: {
-            fontWeight: '700',
-            fontSize: 15,
-          },
-          tabBarIconStyle: { display: 'none' },
-          tabBarActiveTintColor: '#000',
-        }}>
-        <Tab.Screen
-          name="Customer"
-          component={CustomerStack}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Tab.Screen
-          name="Barber"
-          component={Fourth}
-          options={{headerShown: false}}
-        />
-        <Tab.Screen
-          name="Admin"
-          component={Fifth}
-          options={{headerShown: false}}
-        />
-      </Tab.Navigator>
-    </NavigationContainer>
+      <QueryClientProvider client={queryClient}>
+        <NavigationContainer>
+          <Tab.Navigator
+            screenOptions={{
+              tabBarLabelPosition: 'beside-icon',
+              tabBarLabelStyle: {
+                fontWeight: '700',
+                fontSize: 15,
+              },
+              tabBarIconStyle: {display: 'none'},
+              tabBarActiveTintColor: '#000',
+            }}>
+            <Tab.Screen
+              name="Customer"
+              component={CustomerStack}
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Tab.Screen
+              name="Barber"
+              component={Fourth}
+              options={{headerShown: false}}
+            />
+            <Tab.Screen
+              name="Admin"
+              component={Fifth}
+              options={{headerShown: false}}
+            />
+          </Tab.Navigator>
+        </NavigationContainer>
+      </QueryClientProvider>
   );
 }
 

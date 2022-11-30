@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
 import axios from 'axios';
 import Config from 'react-native-config';
+//TODO DELETE THIS AND USE
 const useGetAppointment = url => {
   const [loading1, setLoading1] = useState(true);
   const [error1, setError1] = useState();

@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View,Text,Button,Image,Dimensions,FlatList,ActivityIndicator,ImageBackground,ScrollView,Touchable,TouchableOpacity,StyleSheet, Alert,} from 'react-native';
+import {View,Text,Button,Image,Dimensions,FlatList,ActivityIndicator,ImageBackground,ScrollView,Touchable,TouchableOpacity,StyleSheet, Alert, RefreshControl,} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import InfoCard from '../components/InfoCard.js/InfoCard';
 import useFetch from '../hooks/useFetch/useFetch';
@@ -33,67 +33,40 @@ const barberId = Config.API_URL + '637bf98c27430419a412b88d';
  const nextDay = year + '-' + month + '-' + (day + 2);
 
 
-export default function Fourth(props) {
+export default function Fourth({ navigation }) {
+  //use useFetch again when refreshed or change page
+  function changePage() {
+    navigation.navigate('Third');
+  }
+  
+  
   const [filtered, setFiltered] = useState([]);
   // boolen update calisiyor diffInToday icerir
+  //TODO: BOOKMARKS EXTENSION SAVES TODOS
   function booleanUpdate(date) {
-    switch (diffInToday(date)) {
-      case 0:
-        axios({
-          method: 'patch',
-          url: barberId,
-
-          data: {
-            today: false,
-          },
-        })
-          .then(function (response) {
-            console.log('baglaniyo: ' + barberId);
-          })
-          .catch(function (error) {
-            console.log('-----randevu Rezerve ' + error);
-          });
-        break;
-      case 1:
-        axios({
-          method: 'patch',
-          url: barberId,
-
-          data: {
-            tomorrow: false,
-          },
-        })
-          .then(function (response) {
-            console.log('baglaniyo: ' + barberId);
-          })
-          .catch(function (error) {
-            console.log('-----randevu Rezerve ' + error);
-          });
-
-        break;
-      case 2:
-        axios({
-          method: 'patch',
-          url: barberId,
-
-          data: {
-            nextDay: false,
-          },
-        })
-          .then(function (response) {
-            console.log('baglaniyo: ');
-          })
-          .catch(function (error) {
-            console.log('-----randevu Rezerve ' + error);
-          });
-        break;
-
-      default:
-        console.log('default');
-        break;
+    const availableData = {};
+    const checkToday = diffInToday(date);
+    if (checkToday == 0) availableData.today = false;
+    else if (checkToday == 1) availableData.tomorrow = false;
+    else if (checkToday == 2) availableData.nextDay = false;
+    else {
+      console.log('default');
     }
+     axios({
+       method: 'patch',
+       url: barberId,
+       data: availableData,
+     })
+       .then(function (response) {
+         console.log('baglaniyo: ' + barberId);
+         console.log(availableData);
+       })
+       .catch(function (error) {
+         console.log('-----randevu Rezerve ' + error);
+       });
+  
   }
-
+  //TODO:
   function diffInToday(date1) {
     const date = new Date();
     const day = date.getDate();
@@ -106,20 +79,22 @@ export default function Fourth(props) {
     const Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
     return Difference_In_Days;
   }
-  function randevularimdanSil(date,id) {
-   console.log('>>>>> id ' + id + 'silinecek');
-   axios
-     .delete(`${Config.API}/randevularim/${id}`)
-     .then(res => {
-       console.log('>>>>> randevularimdanSil silindi');
-     }).then(() => {
-       booleanUpdate(date);
-     })
-     .catch(err => {
-       console.log('>>>>> randevu silinemedi' + err);
-     });
-}
-  const createTwoButtonAlert = (date,filtered) => {
+  //TODO:
+  function randevularimdanSil(date, id) {
+    console.log('>>>>> id ' + id + 'silinecek');
+    axios
+      .delete(`${Config.API}/randevularim/${id}`)
+      .then(res => {
+        console.log('>>>>> randevularimdanSil silindi');
+      })
+      .then(() => {
+        booleanUpdate(date);
+      })
+      .catch(err => {
+        console.log('>>>>> randevu silinemedi' + err);
+      });
+  }
+  const createTwoButtonAlert = (date, filtered) => {
     Alert.alert(
       'Emin misiniz?',
       'Seçili Randevuyu iptal etmek istediğinize emin misiniz?',
@@ -133,12 +108,11 @@ export default function Fourth(props) {
           text: 'Evet',
           onPress: () => {
             if (filtered.length > 0) {
-               
-               randevularimdanSil(date,filtered[0]._id);
+              randevularimdanSil(date, filtered[0]._id);
+            } 
             }
-           
           },
-        },
+      
       ],
     );
   };
@@ -165,8 +139,8 @@ export default function Fourth(props) {
                     item.kuaforid === '637bf98c27430419a412b88d',
                 );
                 setFiltered(filteredData);
-                  createTwoButtonAlert(gunString, filtered);
-                
+                console.log(filteredData[0]);
+                createTwoButtonAlert(gunString, filteredData);
               }}>
               <Text style={styles.text5}>{cancelText}</Text>
             </TouchableOpacity>
@@ -180,49 +154,60 @@ export default function Fourth(props) {
   const {error, loading, data} = useFetch(
     Config.API_URL + '637bf98c27430419a412b88d',
   );
-  const {error1, loading1, data1} = useGetAppointment(Config.API+"/randevularim");
+ 
+  const {error1, loading1, data1} = useGetAppointment(
+    Config.API + '/randevularim',
+  );
+  
 
-
-
+  //TODO: naming style
   return (
     <SafeAreaView style={{flex: 1}}>
-      <ScrollView>
-        <View>
-          <ImageBackground
-            style={styles.images_bg}
-            source={{
-              uri: !data.gender ? genderImage1 : genderImage2,
-            }}></ImageBackground>
-        </View>
-        <View style={styles.view1}></View>
-        <View>
-          <Text style={styles.text1}>{text1}</Text>
-        </View>
-        <View style={styles.view2}></View>
-        <InfoCard text={data.name} imageUri={ppImage}></InfoCard>
-        <View style={styles.view3} />
-        <InfoCard text={data.email} imageUri={emailImage}></InfoCard>
-        <View style={styles.view3} />
-        <InfoCard text={data.phone} imageUri={phoneImage}></InfoCard>
-        <View style={styles.view3} />
-        <InfoCard text={data.address} imageUri={addressImage}></InfoCard>
-        <View style={styles.view3} />
-        <InfoCard text={passwordText} imageUri={passwordImage}></InfoCard>
-        <View style={styles.view3} />
-        <View style={styles.view4}>
-          <Text style={styles.text2}>{randevularimText}</Text>
-        </View>
-        {loading ? (
-          <ActivityIndicator size="large" />
-        ) : (
-          <View>
-            <View>{data.today ? myAppointmentCard(today) : null}</View>
-            <View>{data.tomorrow ? myAppointmentCard(tomorrow) : null}</View>
-            <View>{data.nextDay ? myAppointmentCard(nextDay) : null}</View>
-          </View>
-        )}
-      </ScrollView>
-    </SafeAreaView>
+          <ScrollView
+            refreshControl={
+              <RefreshControl refreshing={false} onRefresh={
+                () => {
+                  changePage;
+              }} />
+            }>
+            <View>
+              <ImageBackground
+                style={styles.images_bg}
+                source={{
+                  uri: !data.gender ? genderImage1 : genderImage2,
+                }}></ImageBackground>
+            </View>
+            <View style={styles.view1}></View>
+            <View>
+              <Text style={styles.text1}>{text1}</Text>
+            </View>
+            <View style={styles.view2}></View>
+            <InfoCard text={data.name} imageUri={ppImage}></InfoCard>
+            <View style={styles.view3} />
+            <InfoCard text={data.email} imageUri={emailImage}></InfoCard>
+            <View style={styles.view3} />
+            <InfoCard text={data.phone} imageUri={phoneImage}></InfoCard>
+            <View style={styles.view3} />
+            <InfoCard text={data.address} imageUri={addressImage}></InfoCard>
+            <View style={styles.view3} />
+            <InfoCard text={passwordText} imageUri={passwordImage}></InfoCard>
+            <View style={styles.view3} />
+            <View style={styles.view4}>
+              <Text style={styles.text2}>{randevularimText}</Text>
+            </View>
+            {loading ? (
+              <ActivityIndicator size="large" />
+            ) : (
+              <View>
+                <View>{data.today ? myAppointmentCard(today) : null}</View>
+                <View>
+                  {data.tomorrow ? myAppointmentCard(tomorrow) : null}
+                </View>
+                <View>{data.nextDay ? myAppointmentCard(nextDay) : null}</View>
+              </View>
+            )}
+          </ScrollView>
+        </SafeAreaView>
   );
 }
 /*
@@ -294,13 +279,13 @@ const styles = StyleSheet.create({
   view4: {marginTop: 15},
   view5: {
     height: h * 0.2,
-    backgroundColor: 'red',
+    backgroundColor: 'gray',
     borderRadius: 5,
     margin: 10,
   },
   view6: {
     height: h * 0.06,
-    backgroundColor: 'gray',
+    backgroundColor: 'purple',
     borderRadius: 5,
     flexDirection: 'row',
     justifyContent: 'space-between',

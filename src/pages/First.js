@@ -1,73 +1,70 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet,Text,View,SafeAreaView,ActivityIndicator,FlatList,Button,Dimensions,Touchable,TouchableOpacity,Image,} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  SafeAreaView,
+  ActivityIndicator,
+  FlatList,
+  Button,
+  Dimensions,
+  Touchable,
+  TouchableOpacity,
+  Image,
+} from 'react-native';
 import BarberCard from '../components/BarberCard/BarberCard';
 import SearchBar from '../components/SearchBar/SearchBar';
 import SwitchSelector from 'react-native-switch-selector';
 import Config from 'react-native-config';
-
-
 const axios = require('axios');
 
-
-const App = ({ navigation }) => {
+const App = ({navigation}) => {
   const handleBarberSelect = _id => {
-    
-    navigation.navigate("Third",{_id});
+    navigation.navigate('Third', {_id});
   };
   const renderBarberCard = ({item}) => {
-    //console.log(item);
-    //console.log("------------------------------");
-
-    return <BarberCard onSelect={()=>handleBarberSelect(item._id)} item={item}></BarberCard>;
+    return (
+      <BarberCard
+        onSelect={() => handleBarberSelect(item._id)}
+        item={item}></BarberCard>
+    );
   };
 
   const [gender, setGender] = useState(false);
 
   const [list, setList] = useState([]);
-  //: .2 list çözdü
-  const [list2, setList2] = useState([]);
+  const [list2, setList2] = useState([]); //TODO:naming is bad
   const [loading, setLoading] = useState(true);
 
   const handleSearch = text => {
-    const filteredList = list2.filter(
-      barber => {
+    const filteredList = list2.filter(barber => {
       const searchedText = text.toLowerCase();
       const currentTitle = barber.name.toLowerCase();
       return currentTitle.indexOf(searchedText) > -1;
-      }
-    );
+    });
     setList(filteredList);
   };
 
+  const handleGender = value => {
+    const filteredlist = list2.filter(item => {
+      return item.gender == value;
+    });
 
-  const handleGender = (value) => {
-    const filteredlist = list2
-      .filter(item => {
-        return item.gender == value;
-      });
-    //console.log(filteredlist);
-    
-     setList(filteredlist);
-   
+    setList(filteredlist);
   };
 
+  //TODO:useFetchi kullan
   function getBarbers() {
-    //console.log(Config.API_URL);
     axios
       .get(Config.API_URL)
       .then(function (response) {
         setList(response.data);
         setList2(response.data);
         setLoading(false);
-        // handle success
-        //console.log(response.data);
       })
       .catch(function (error) {
         // handle error
-        //console.log(error);
-      })
-      .then(function () {
-        // always executed
+        console.log(error);
       });
   }
 
@@ -102,40 +99,30 @@ const App = ({ navigation }) => {
           //console.log(value);
           setGender(value);
           handleGender(value);
-
         }}
-      
         textColor={'gray'} //'#7a44cf'
         selectedColor={'white'}
         buttonColor={'gray'}
         borderColor={'gray'}
         hasPadding
         options={[
-          {label: 'Erkek', value: true}, //images.feminino = require('./path_to/assets/img/feminino.png')
-          {label: 'Kadın', value: false}, //images.masculino = require('./path_to/assets/img/masculino.png')
+          {label: 'Erkek', value: true}, 
+          {label: 'Kadın', value: false}, 
         ]}
         testID="gender-switch-selector"
         accessibilityLabel="gender-switch-selector"
       />
-      {/* <View style={{marginVertical: 5, marginHorizontal: 100}}>
-        <Button
-          color="grey"
-          title="Tum Berberler"
-          onPress={getBarbers}></Button>
-      </View> */}
-
       {loading ? (
         <ActivityIndicator size="large" />
       ) : (
         <FlatList
+          refreshing={loading}
+          onRefresh={getBarbers}
           numColumns={2}
           columnWrapperStyle={{justifyContent: 'space-between'}}
-          data={list.map((item, index) => {
-            item.key = index.toString();
-            return item;
-          })}
+          data={list}
           renderItem={renderBarberCard}
-          keyExtractor={item => item.id}
+          keyExtractor={(item,index) => index}
         />
       )}
     </SafeAreaView>

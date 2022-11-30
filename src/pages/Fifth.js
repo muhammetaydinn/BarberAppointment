@@ -94,17 +94,11 @@ const Fifth = () => {
       {
         text: 'Evet',
         onPress: () => {
-          //TODO:
-          console.log('evet');
-          console.log('>>>>> id:' + id);
-          console.log('>>>>> email:' + email);
-          console.log('>>>>> name:' + name);
-          console.log('>>>>> address:' + address);
-          console.log('>>>>> gender:' + gender); //true = kadın, false = erkek
-          console.log('>>>>> phone:' + phone);
-          console.log('>>>>> today:' + false);
-          console.log('>>>>> tomorrow:' + false);
-          console.log('>>>>> nextDay:' + false);
+          //TODO:null kontrolü yapılacak
+          //use english
+          console.log('>>>>> id:' + id + "\n" + '>>>>> email:' + email + "\n" + '>>>>> name:' + name + "\n" + '>>>>> address:' + address +
+          "phone:" + phone
+          );
           kuaforEkle(id, email, name, address, gender, phone);
         },
       },
@@ -130,8 +124,8 @@ const Fifth = () => {
         </Text>
       </View>
 
-      {Kutu(name, setName, 'Kuaför Adını Yazın', 50)}
-      {Kutu(mail, setMail, 'Mail Adresinizi Yazın', 50)}
+      {Kutu(name, setName, 'Kuaför Adını Yazın', 30)}
+      {Kutu(mail, setMail, 'Mail Adresinizi Yazın', 30)}
       {Kutu(phone, setPhone, 'Telefon Numaranızı Yazın (GSM)', 10)}
       {Kutu(address, setAddress, 'Adresinizi Yazın', 75)}
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -153,30 +147,37 @@ const Fifth = () => {
         <Button
           color={'gray'}
           onPress={() => {
-            createTwoButtonAlert(
-              'Kontrol Edin',
+            if (name.length<=5 || mail.length<10 || phone.length != 10 || address.length<=20) { 
+              alert(
+                'Lütfen tüm alanları doldurunuz',
+              );
+            }
+            else {
+               createTwoButtonAlert(
+                 'Kontrol Edin',
 
-              'Adı: ' +
-                name +
-                '\n' +
-                'mail: ' +
-                mail +
-                '\n' +
-                'telefon: ' +
-                phone +
-                '\n' +
-                'adres: ' +
-                address +
-                '\n' +
-                'cinsiyet: ' +
-                (isEnabled ? 'kadın' : 'erkek'),
-              id,
-              mail,
-              name,
-              address,
-              isEnabled,
-              phone,
-            );
+                 'Adı: ' +
+                   name +
+                   '\n' +
+                   'mail: ' +
+                   mail +
+                   '\n' +
+                   'telefon: ' +
+                   phone +
+                   '\n' +
+                   'adres: ' +
+                   address +
+                   '\n' +
+                   'cinsiyet: ' +
+                   (isEnabled ? 'kadın' : 'erkek'),
+                 id,
+                 mail,
+                 name,
+                 address,
+                 isEnabled,
+                 phone,
+               );
+           }
           }}
           title="     EKLE     "
         />

@@ -53,18 +53,17 @@ const RandevularCard = ({ item, navigation }) => {
       });
   }
   //TODO: moment library dif
-  function diffInToday(date1) {
-    const date = new Date();
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    const today = year + '-' + month + '-' + day; // bugünün kalansız string hali
-    const date2 = new Date(today); //bugünün normal formatı
-    const date3 = new Date(date1); //date1 in normal formatı
-    const Difference_In_Time = date3.getTime() - date2.getTime();
-    const Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
-    return Difference_In_Days;
-  }
+   function diffInToday(date1) {
+     var todayy = new Date();
+     const today = todayy.toISOString().split('T')[0];
+     const date2 = new Date(today); //bugünün normal formatı
+     const date3 = new Date(date1); //date1 in normal formatı
+     const Difference_In_Time = date2.getTime() - date3.getTime();
+     const Difference_In_Days = Math.abs(
+       Difference_In_Time / (1000 * 3600 * 24),
+     );
+     return Difference_In_Days;
+   }
   {
   }
   const createTwoButtonAlert = (id, kuaforid, date) => {

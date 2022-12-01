@@ -78,13 +78,15 @@ export default function Third({ route, navigation }) {
           console.log('-----randevu Rezerve ' + error);
         });
   };
-  const date = new Date();
-  const day = date.getDate();
-  const month = date.getMonth() + 1;
-  const year = date.getFullYear();
-  const today = year + '-' + month + '-' + day;
-  const tomorrow = year + '-' + month + '-' + (day + 1);
-  const nextDay = year + '-' + month + '-' + (day + 2);
+  
+ var todayy = new Date();
+ var tomorroww = new Date(todayy);
+ var nextDayy = new Date(todayy);
+ tomorroww.setDate(tomorroww.getDate() + 1);
+ nextDayy.setDate(nextDayy.getDate() + 2);
+ const today = todayy.toISOString().split('T')[0];
+ const tomorrow = tomorroww.toISOString().split('T')[0];
+ const nextDay = nextDayy.toISOString().split('T')[0];
   
   const {_id} = route.params;
   const {loading, error, data} = useFetch(`${Config.API_URL}/${_id}`);

@@ -24,13 +24,14 @@ const cancelText = 'İptal Et';
 const barberId = Config.API_URL + '637bf98c27430419a412b88d';
 
 
- const date = new Date();
- const day = date.getDate();
- const month = date.getMonth() + 1;
- const year = date.getFullYear();
- const today = year + '-' + month + '-' + day;
- const tomorrow = year + '-' + month + '-' + (day + 1);
- const nextDay = year + '-' + month + '-' + (day + 2);
+var todayy = new Date();
+var tomorroww = new Date(todayy);
+var nextDayy = new Date(todayy);
+tomorroww.setDate(tomorroww.getDate() + 1);
+nextDayy.setDate(nextDayy.getDate() + 2);
+const today = todayy.toISOString().split('T')[0];
+const tomorrow = tomorroww.toISOString().split('T')[0];
+const nextDay = nextDayy.toISOString().split('T')[0];
 
 
 export default function Fourth({ navigation }) {
@@ -67,18 +68,15 @@ export default function Fourth({ navigation }) {
   
   }
   //TODO:
-  function diffInToday(date1) {
-    const date = new Date();
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    const today = year + '-' + month + '-' + day; // bugünün kalansız string hali
-    const date2 = new Date(today); //bugünün normal formatı
-    const date3 = new Date(date1); //date1 in normal formatı
-    const Difference_In_Time = date3.getTime() - date2.getTime();
-    const Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
-    return Difference_In_Days;
-  }
+ function diffInToday(date1) {
+ var todayy = new Date();
+ const today = todayy.toISOString().split('T')[0];
+  const date2 = new Date(today); //bugünün normal formatı
+  const date3 = new Date(date1); //date1 in normal formatı
+  const Difference_In_Time = date2.getTime()-date3.getTime();
+  const Difference_In_Days = Math.abs(Difference_In_Time / (1000 * 3600 * 24));
+  return Difference_In_Days;
+}
   //TODO:
   function randevularimdanSil(date, id) {
     console.log('>>>>> id ' + id + 'silinecek');
